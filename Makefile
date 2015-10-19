@@ -64,7 +64,7 @@ FIRMWARE=otto.hex
 LFUSE=0xef
 HFUSE=0xcd
 
-LC_COLLATE=C 
+LC_COLLATE=C
 
 ASFLAGS= -mmcu=$(DEVICE) -I$(AVR)
 CFLAGS=	-Wall -O2 -mmcu=$(DEVICE) -I$(AVR)
