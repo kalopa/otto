@@ -1,0 +1,38 @@
+Otto runs in one of four modes.
+
+Mode 0: SLEEP
+
+In this mode, Otto disables the stepper controllers, thus tri-stating
+the driver and allowing the devices to freewheel. After this, it executes
+a HALT instruction and freezes until the next interrupt. Power consumption
+is at a minimum.
+
+This mode is useful for transporting the boat with the power systems
+enabled. When the controller first starts up, it is in this mode until
+it is told otherwise by Igor.
+
+Mode 1: REMOTE
+
+This mode is for operation via a remote control system. Otto will listen
+to the amalgamated pulse output of a remote control receiver, deduce
+the required rudder and sail angles, and set them accordingly.
+
+Mode 2: MANUAL
+
+In this mode, Otto simply sets the rudder and sail trim to whatever is
+sent down the wire by the onboard computer. Initially, the rudder is
+centred and the sail is eased fully out. Rudder and sail settings are
+then sent down the serial line, and Igor updates the various controls
+accordingly.
+
+Mode 3: AUTOWIND
+
+In this mode, Otto will use a PID controller to tune the rudder position
+so as to maintain a particular apparent wind angle, as reported by the
+wind direction indicator. The PID parameters are saved in EEPROM.
+
+Mode 4: AUTOCOMPASS
+
+In this mode, Otto will use the same PID controller to tune the rudder
+position so as to maintain a particular compass angle as reported by
+the on-board compass hardware. The PID parameters are saved in EEPROM.

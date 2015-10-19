@@ -1,0 +1,31 @@
+A		Acknowledge/Clear alarms
+a		Report alarm status
+Bn		Request orderly shutdown (reboot in n minutes)
+b		Return seconds since Otto booted
+Cn		Set desired Compass Heading to n (0 -> 255)
+c		Report actual Compass Heading
+d		Print debug information, whatever that might be
+e		Return most recent PID error
+Ln		Set navigation light on or off (n = 0:OFF)
+Mn		Turn off or on the mission switch bootup (n = 0:OFF)
+m		Report mission switch status
+Nn		Set current navigation mode to n (0 -> 5)
+n		Report current navigation mode
+On		Write n to current EEPROM address
+o		Read from current EEPROM address
+Pn		Set current EEPROM address
+p		Return current EEPROM address
+Rn		Set rudder position to n (-45 -> +45)
+r		Report current rudder position
+Sn		Set current sail position to n (0 -> +100)
+s		Report current sail position
+Tn		Set desired True Wind Angle to n (0 -> 255)
+t		Report actual True Wind Angle
+v		Report voltage readings
+W		Watchdog - keep the onboard computer running a while longer
+X1		Reload EEPROM data
+X2		Calibrate rudder servo (find zero)
+X3		Calibrate sail servo (find zero)
+X4		Calibrate compass
+X5		Calibrate the wind direction indicator
+Z999	Reset Otto
