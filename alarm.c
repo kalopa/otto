@@ -64,10 +64,24 @@ alarm(int n)
 void
 alarm_check()
 {
-	if (alarm_state != alarm_state_copy) {
-		alarm_state_copy = alarm_state;
-		if (buzzer_state == 0)
-			buzzer_state = 8;
-		bootup();
+	/*
+	 * If power is bad, turn off unnecessary systems.
+	 * We're in trouble, here. We have absolutely no power reserves.
+	 * Shut off everything and reduce power consumption until things
+	 * get better - if they do... :(
+	 */
+	if (power_state == POWER_FAIL) {
+		_buzzer(0);
+		_navlight(0);
+		shutdown(240, 1);
 	}
+	if (alarm_state != alarm_state_copy) {
+		printf("NA:%o\n", alarm_state);
+		if (power_state != POWER_FAIL) {
+			if (buzzer_state == 0)
+				buzzer_state = 8;
+			bootup();
+		}
+	}
+	alarm_state_copy = alarm_state;
 }

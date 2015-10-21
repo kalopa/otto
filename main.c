@@ -79,10 +79,10 @@ main()
 	 * Right. Let the good times roll...
 	 */
 	sei();
-	calibrate(0);
 	(void )fdevopen(sio_putc, sio_getc);
 	*(uchar_t *)MCUCSR = 0;
-	printf("\n\n# Otto!\n");
+	printf("\nOtto!\n");
+	calibrate(0);
 	alarm(OTTO_RESTART);
 	/*
 	 * Start infinite loop.
@@ -107,6 +107,10 @@ main()
 			pp = NULL;
 			pid_error = 0;
 		}
+		if (pid_error >= 128)
+			pid_error -= 256;
+		else if (pid_error <= -128)
+			pid_error += 256;
 		/*
 		 * Recompute the rudder angle if there's an error
 		 */
@@ -116,16 +120,10 @@ main()
 			 */
 			 /* ::FIXME:: */
 		} else {
-			printf("PID ERROR: %d\n", pid_error);
-			if (pid_error != 0 && pp != NULL)
+			if (pp != NULL)
 				rudder_adjust(pidcalc(pp, pid_error));
 			sail_adjust(effective_twa());
 		}
-		/*
-		 * Check for serial I/O
-		 */
-		if (!sio_iqueue_empty())
-			do_cmd_char();
 		/*
 		 * Test the mission switch. If it's been flipped and the onboard
 		 * compute hasn't told us to ignore that fact, then boot the
@@ -149,6 +147,17 @@ main()
 		if (mother_timer == 0)
 			mother_timeout();
 		debug_vals[1]++;
+		/*
+		 * Wait for a while before we try again...
+		 */
+		while (second_elapsed() == 0) {
+			_watchdog();
+			/*
+			 * Check for serial I/O
+			 */
+			if (!sio_iqueue_empty())
+				do_cmd_char();
+		}
 	}
 }
 
@@ -160,7 +169,6 @@ calibrate(int system)
 {
 	int i;
 
-	printf("Calibrating (%d)...\n", system);
 	switch (system) {
 		case 0:
 			for (i = 1; i <= 5; i++)
@@ -169,13 +177,12 @@ calibrate(int system)
 
 		case 1:
 			/* EEPROM reload */
-			printf("EEPROM Reload...\n");
 			eeprom_data_test();
-			if (eeprom_ok) {
-				eeprom_copy(EEPROM_WIND_PID, (void *)&wind_pid, sizeof(wind_pid));
-				eeprom_copy(EEPROM_COMPASS_PID, (void *)&compass_pid, sizeof(compass_pid));
-				analog_eeprom_data();
-			}
+			if (!eeprom_ok)
+				break;
+			analog_eeprom_data();
+			eeprom_copy(EEPROM_WIND_PID, (void *)&wind_pid, sizeof(wind_pid));
+			eeprom_copy(EEPROM_COMPASS_PID, (void *)&compass_pid, sizeof(compass_pid));
 			break;
 
 		case 2:

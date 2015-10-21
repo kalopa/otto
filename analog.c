@@ -109,18 +109,6 @@ voltage_read()
 	}
 	if (voltage[3] > solar_high)
 		alarm(VSOLAR_OVERVOLTAGE);
-	/*
-	 * If power is bad, turn off unnecessary systems.
-	 * We're in trouble, here. We have absolutely no power reserves.
-	 * Shut off everything and reduce power consumption until things
-	 * get better - if they do... :(
-	 */
-	if (power_state == POWER_FAIL) {
-		_buzzer(0);
-		_navlight(0);
-		shutdown(240);
-		mother_timeout();
-	}
 }
 
 /*

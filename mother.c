@@ -48,7 +48,8 @@ void		run_command(char, int);
 void
 bootup()
 {
-	if (mother_state == MOTHER_DOWN && power_state != POWER_FAIL)
+	printf("BU\n");
+	if (mother_state == MOTHER_DOWN)
 		mother_timeout();
 	else if (mother_timer < 120)
 		mother_timer = 120;
@@ -62,11 +63,15 @@ bootup()
  * has been issued. The 'W' command resets the countdown timer.
  */
 void
-shutdown(uchar_t next)
+shutdown(uchar_t next, uchar_t force)
 {
 	next_boot = next;
-	if (mother_state != MOTHER_DOWN)
+	printf("SD:%d\n", next);
+	if (mother_state != MOTHER_DOWN) {
+		if (force)
+			mother_state = MOTHER_SHUTDOWN;
 		mother_timeout();
+	}
 }
 
 /*
@@ -76,16 +81,19 @@ shutdown(uchar_t next)
 void
 mother_timeout()
 {
-	printf("Mother timeout: state=%d\n", mother_state);
+	printf("M.to: s%d\n", mother_state);
 	switch (mother_state) {
 	case MOTHER_DOWN:
 		/*
 		 * Time to boot up. We have 60 seconds to hear from the
 		 * main computer, otherwise we've failed.
 		 */
-		_cpupwr(1);
-		_setled(1);	/* ::FIXME:: */
-		mother_state = MOTHER_BOOTING;
+		if (power_state != POWER_FAIL) {
+			printf("ON\n");
+			_cpupwr(1);
+			_setled(1);	/* ::FIXME:: */
+			mother_state = MOTHER_BOOTING;
+		}
 		serial_state = 0;
 		mother_timer = 60;
 		break;
@@ -100,6 +108,7 @@ mother_timeout()
 		 * five minutes (timed out) or the indicated amount if
 		 * an orderly shutdown.
 		 */
+		printf("OFF\n");
 		_cpupwr(0);
 		_setled(0);	/* ::FIXME:: */
 		mother_state = MOTHER_DOWN;

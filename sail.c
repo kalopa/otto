@@ -59,6 +59,11 @@ sailinit()
 void
 sail_adjust(uchar_t twa)
 {
+	static uchar_t saved_twa = 0;
+
+	if (saved_twa == twa)
+		return;
+	saved_twa = twa;
 	if (twa > 128)
 		twa = -twa;
 	if (twa <= 32)
@@ -67,7 +72,7 @@ sail_adjust(uchar_t twa)
 		twa -= 32;
 		req_sail = twa * 25 / 24;
 	}
-	printf("Required sail: %d\n", req_sail);
+	printf("ReqS:%d\n", req_sail);
 }
 
 /*
@@ -102,6 +107,6 @@ sail_setpos()
 void
 sail_calibrate()
 {
-	printf("Commencing sail calibration...\n");
+	printf("Scal\n");
 	/* ::FIXME:: */
 }

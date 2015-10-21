@@ -190,7 +190,7 @@ void	delay(int);
 uchar_t	second_elapsed();
 
 void	bootup();
-void	shutdown(uchar_t);
+void	shutdown(uchar_t, uchar_t);
 void	mother_timeout();
 
 void	report1(uchar_t, uint_t);

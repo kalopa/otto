@@ -37,6 +37,7 @@
 #include "alarms.h"
 
 #define RUDDER_MINIMUM		-400
+#define RUDDER_OFFSET		100
 
 int				req_rudder;
 volatile int	cur_rudder;
@@ -58,12 +59,17 @@ rudderinit()
 void
 rudder_adjust(char angle)
 {
-	if (angle > 45)
-		angle = 45;
-	else if (angle < -45)
-		angle = -45;
-	req_rudder = (angle + 45) * 20 / 9;
-	printf("Required rudder: %d\n", req_rudder);
+	static char saved_angle;
+
+	if (saved_angle == angle)
+		return;
+	saved_angle = angle;
+	if (angle > 40)
+		angle = 40;
+	else if (angle < -40)
+		angle = -40;
+	req_rudder = RUDDER_OFFSET + angle * 20 / 9;
+	printf("ReqR:%d\n", req_rudder);
 }
 
 /*
@@ -98,6 +104,6 @@ rudder_setpos()
 void
 rudder_calibrate()
 {
-	printf("Commencing rudder calibration...\n");
+	printf("Rcal\n");
 	/* ::FIXME:: */
 }

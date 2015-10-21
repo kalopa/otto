@@ -66,7 +66,6 @@ serialinit()
 void
 run_command(char cmd, int val)
 {
-	printf("RUN: %c (%d)\n", cmd, val);
 	switch (cmd) {
 		case 'A':
 			/* Clear all known alarms */
@@ -80,7 +79,7 @@ run_command(char cmd, int val)
 
 		case 'B':
 			/* Request orderly shutdown for 'n' minutes */
-			shutdown(val);
+			shutdown(val, 0);
 			break;
 
 		case 'b':
@@ -152,6 +151,14 @@ run_command(char cmd, int val)
 			report1('p', eeprom_getaddr());
 			break;
 
+		case 'Q':
+			/*
+			 * ::FIXME::
+			 * Debugging way to set the actual TWA
+			 */
+			actual_twa = val;
+			break;
+
 		case 'R':
 			/* Set the required rudder angle */
 			rudder_adjust(val);
@@ -181,6 +188,7 @@ run_command(char cmd, int val)
 
 		case 'v':
 			/* Report all (last) voltage readings */
+			report_voltages();
 			break;
 
 		case 'W':
@@ -254,6 +262,7 @@ do_cmd_char()
 	 * Are we waiting for Mother to say hello?
 	 */
 	if (mother_state == MOTHER_BOOTING) {
+#if 0
 		if (hello_mother[serial_state] == ch) {
 			serial_state++;
 			if (hello_mother[serial_state] == '\0') {
@@ -262,13 +271,17 @@ do_cmd_char()
 				 * running. Mark it as such, and wait
 				 * for the next CR/LF.
 				 */
-				printf("Plugh.\n");
+				putchar('!');
 				mother_state = MOTHER_UP;
 				mother_timer = 300;
 				serial_state = 3;
 			}
 		} else
 			serial_state = 0;
+#else
+		mother_state = MOTHER_UP;
+		mother_timer = 3600;
+#endif
 		return;
 	}
 	/*

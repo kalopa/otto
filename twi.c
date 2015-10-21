@@ -72,6 +72,7 @@ twiinit()
 void
 twi_read()
 {
+#if 0
 	int i;
 	uchar_t status;
 
@@ -102,6 +103,7 @@ twi_read()
 	 */
 	*twcr = (TWCR_TWINT|TWCR_TWSTO|TWCR_TWEN);
 	putchar('!');
+#endif
 }
 
 /*

@@ -60,6 +60,7 @@ STRIP=avr-strip
 AVR_PROG=sudo avrdude
 
 FIRMWARE=otto.hex
+EEPROM_DATA=eeprom.hex
 
 LFUSE=0xef
 HFUSE=0xcd
@@ -76,11 +77,11 @@ all:	$(BIN)
 clean:
 	rm -f $(BIN) $(OBJS) $(FIRMWARE) alarms.h
 
-program: $(FIRMWARE)
-	$(AVR_PROG) -p $(DEVICE) -c $(PROG) -U flash:w:$(FIRMWARE):i
-	rm $(FIRMWARE)
+program: $(FIRMWARE) $(EEPROM_DATA)
+	$(AVR_PROG) -p $(DEVICE) -c $(PROG) -U flash:w:$(FIRMWARE):i -U eeprom:w:$(EEPROM_DATA):i
+	rm $(FIRMWARE) $(EEPROM_DATA)
 
-eeprog: program
+eeprog: $(EEPROM_DATA)
 	$(AVR_PROG) -p $(DEVICE) -c $(PROG) -U eeprom:w:$(EEPROM_DATA):i
 
 fuses:
@@ -95,6 +96,9 @@ tags:	$(ASRCS) $(CSRCS)
 
 $(FIRMWARE): $(BIN)
 	avr-objcopy -O ihex $(BIN) $(FIRMWARE)
+
+$(EEPROM_DATA): constants.rb
+	./constants.rb > $(EEPROM_DATA)
 
 $(OBJS): $(IOREGS) $(REGVALS)
 

@@ -35,9 +35,6 @@
 #include "otto.h"
 #include "ioregs.h"
 
-uchar_t		admux;
-uchar_t		adcsra;
-
 uchar_t					desired_twa;
 volatile uchar_t		actual_twa;
 
@@ -47,12 +44,12 @@ volatile uchar_t		actual_twa;
 void
 windinit()
 {
-	admux = (ADMUX_REFS0|ADMUX_ADLAR);
-	adcsra = (ADCSRA_ADEN|ADCSRA_ADPS2|ADCSRA_ADPS1|ADCSRA_ADPS0);
-	*(uchar_t *)ADMUX = admux;
-	*(uchar_t *)ADCSRA = adcsra;
+	/*
+	 * ::FIXME::
+	 * We're on a beam reach (starboard tack).
+	 */
 	desired_twa = 0;
-	actual_twa = 0;
+	actual_twa = 64;
 }
 
 /*
@@ -62,8 +59,9 @@ windinit()
 void
 wind_read()
 {
-	/* ::FIXME:: */
-	actual_twa = 60;
+	/*
+	 * ::FIXME::
+	 */
 }
 
 /*
@@ -92,6 +90,6 @@ effective_twa()
 void
 wind_calibrate()
 {
-	printf("Commencing wind calibration...\n");
+	printf("Wcal\n");
 	/* ::FIXME:: */
 }

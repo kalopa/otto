@@ -108,6 +108,6 @@ compass_read()
 void
 compass_calibrate()
 {
-	printf("Compass calibration...\n");
+	printf("Ccal\n");
 	/* ::FIXME:: */
 }
